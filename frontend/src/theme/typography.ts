@@ -1,0 +1,9 @@
+export const fontStack = [
+  "system-ui",
+  "-apple-system",
+  '"Segoe UI"',
+  "Roboto",
+  '"Helvetica Neue"',
+  "Arial",
+  "sans-serif",
+].join(", ");
