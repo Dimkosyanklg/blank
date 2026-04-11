@@ -1,10 +1,10 @@
 services:
   - type: web
     name: go-bff
-    runtime: go
+    runtime: node
     rootDir: bff
-    buildCommand: go build -o server ./cmd/server
-    startCommand: ./server
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
     envVars:
       - key: GO_ENV
         value: production
