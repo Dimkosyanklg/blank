@@ -9,6 +9,11 @@ import {
 } from "./auth.schema";
 import * as SC from "./AuthPage.styles";
 import {
+  loginRequest,
+  persistAuthToken,
+  registerRequest,
+} from "../../api/authApi";
+import {
   PasswordHiddenIcon,
   PasswordVisibleIcon,
 } from "./PasswordRevealIcons";
@@ -30,7 +35,6 @@ export const AuthPage = () => {
     reset,
     getValues,
     clearErrors,
-    trigger,
     formState: { errors, isSubmitting, isValid },
   } = useForm<AuthFormValues>({
     defaultValues: authDefaultValues,
@@ -58,14 +62,29 @@ export const AuthPage = () => {
     clearErrors();
   };
 
-  const onSubmit = async (_data: AuthFormValues) => {
+  const onSubmit = async (data: AuthFormValues) => {
     setMessage(null);
-    await new Promise((r) => setTimeout(r, 650));
-    setMessage(
-      mode === AuthMode.Login
-        ? "Демо: вход успешен. Подключите BFF для реальной авторизации."
-        : "Демо: аккаунт создан. Подключите API для сохранения пользователя."
-    );
+    try {
+      if (mode === AuthMode.Login) {
+        const { user, token } = await loginRequest({
+          email: data.email,
+          password: data.password,
+        });
+        persistAuthToken(token);
+        setMessage(`С возвращением, ${user.name}!`);
+      } else {
+        const { user, token } = await registerRequest({
+          name: data.name,
+          email: data.email,
+          password: data.password,
+          confirmPassword: data.confirmPassword,
+        });
+        persistAuthToken(token);
+        setMessage(`Аккаунт создан. Добро пожаловать, ${user.name}!`);
+      }
+    } catch (e) {
+      setMessage(e instanceof Error ? e.message : "Произошла ошибка");
+    }
   };
 
   return (

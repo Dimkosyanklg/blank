@@ -1,8 +1,13 @@
 import { z } from "zod";
 
+const emailField = z.pipe(
+  z.string().min(1, "Введите email"),
+  z.email({ error: "Некорректный email" })
+);
+
 /** Одна форма для RHF: обе схемы парсят в этот же набор полей. */
 export const loginSchema = z.object({
-  email: z.string().min(1, "Введите email").email("Некорректный email"),
+  email: emailField,
   password: z.string().min(8, "Минимум 8 символов"),
   name: z.string(),
   confirmPassword: z.string(),
@@ -11,7 +16,7 @@ export const loginSchema = z.object({
 export const registerSchema = z
   .object({
     name: z.string().min(1, "Введите имя"),
-    email: z.string().min(1, "Введите email").email("Некорректный email"),
+    email: emailField,
     password: z.string().min(8, "Минимум 8 символов"),
     confirmPassword: z.string().min(1, "Повторите пароль"),
   })
