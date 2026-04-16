@@ -1,7 +1,7 @@
-export { GradientLogoMark } from "./brand-mark.styles";
-export { PrimaryButton } from "./button.styles";
-export { ElevatedCard } from "./card.styles";
-export { DividerFootnote } from "./footer.styles";
+export { GradientLogoMark } from "./BrandMark/BrandMark";
+export { PrimaryButton } from "./PrimaryButton/PrimaryButton";
+export { ElevatedCard } from "./ElevatedCard/ElevatedCard";
+export { DividerFootnote } from "./DividerFootnote/DividerFootnote";
 export {
   CheckboxFieldLabel,
   FormErrorText,
@@ -11,10 +11,10 @@ export {
   PasswordFieldInput,
   PasswordToggleButton,
   TextInput,
-} from "./form.styles";
-export { FluidColumn, SpaceBetweenRow } from "./layout.styles";
-export { InlineLink } from "./link.styles";
-export { InfoNotice } from "./notice.styles";
-export { CenteredScreen } from "./screen.styles";
-export { SegmentedTab, SegmentedTabList } from "./tabs.styles";
-export { ScreenHeading, SupportingText } from "./typography.styles";
+} from "./FormControls/FormControls";
+export { FluidColumn, SpaceBetweenRow } from "./Layout/Layout";
+export { InlineLink } from "./InlineLink/InlineLink";
+export { InfoNotice } from "./InfoNotice/InfoNotice";
+export { CenteredScreen } from "./CenteredScreen/CenteredScreen";
+export { SegmentedTab, SegmentedTabList } from "./SegmentedTabs/SegmentedTabs";
+export { ScreenHeading, SupportingText } from "./Typography/Typography";

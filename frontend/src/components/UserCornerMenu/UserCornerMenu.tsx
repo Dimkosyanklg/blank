@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import type { MouseEvent } from "react";
+import { useId, useState } from "react";
 import { useAppSelector } from "../../store/hooks";
 import * as SC from "./UserCornerMenu.styles";
 
@@ -9,28 +10,9 @@ type UserCornerMenuProps = {
 
 export const UserCornerMenu = ({ onLogout, disabled }: UserCornerMenuProps) => {
   const profile = useAppSelector((s) => s.user.profile);
-  const [open, setOpen] = useState(false);
-  const wrapRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    const onDoc = (e: MouseEvent) => {
-      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", onDoc);
-    return () => document.removeEventListener("mousedown", onDoc);
-  }, [open]);
-
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open]);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const menuId = useId();
+  const open = Boolean(anchorEl);
 
   if (!profile) {
     return null;
@@ -42,43 +24,49 @@ export const UserCornerMenu = ({ onLogout, disabled }: UserCornerMenuProps) => {
     "?";
 
   const handleLogout = () => {
-    setOpen(false);
+    setAnchorEl(null);
     onLogout();
   };
 
+  const openMenu = (e: MouseEvent<HTMLElement>) => {
+    setAnchorEl(e.currentTarget);
+  };
+
+  const closeMenu = () => setAnchorEl(null);
+
   return (
-    <SC.Wrap ref={wrapRef}>
+    <SC.Wrap>
       <SC.Trigger
-        type="button"
         aria-expanded={open}
         aria-haspopup="true"
-        aria-controls="user-corner-menu"
-        id="user-corner-trigger"
-        onClick={() => setOpen((v) => !v)}
+        aria-controls={open ? menuId : undefined}
+        onClick={open ? closeMenu : openMenu}
         disabled={disabled}
       >
-        <SC.Avatar aria-hidden>{initial}</SC.Avatar>
-        <SC.TriggerLabel>{profile.name}</SC.TriggerLabel>
+        <SC.UserAvatar aria-hidden>{initial}</SC.UserAvatar>
+        <SC.TriggerLabel as="span">{profile.name}</SC.TriggerLabel>
         <SC.Chevron $open={open} aria-hidden>
           ▾
         </SC.Chevron>
       </SC.Trigger>
-      {open && (
-        <SC.Dropdown
-          id="user-corner-menu"
-          role="menu"
-          aria-labelledby="user-corner-trigger"
-        >
+      <SC.DropdownMenu
+        id={menuId}
+        anchorEl={anchorEl}
+        open={open}
+        onClose={closeMenu}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        transformOrigin={{ vertical: "top", horizontal: "right" }}
+        disableScrollLock
+      >
+        <SC.MenuHeaderItem disabled>
           <SC.MenuUserBlock>
-            <SC.MenuName>{profile.name}</SC.MenuName>
-            <SC.MenuEmail>{profile.email}</SC.MenuEmail>
+            <SC.MenuName as="p">{profile.name}</SC.MenuName>
+            <SC.MenuEmail as="p">{profile.email}</SC.MenuEmail>
           </SC.MenuUserBlock>
-          <SC.MenuDivider role="separator" />
-          <SC.MenuButton type="button" role="menuitem" onClick={handleLogout}>
-            Sign out
-          </SC.MenuButton>
-        </SC.Dropdown>
-      )}
+        </SC.MenuHeaderItem>
+        <SC.MenuDivider />
+        <SC.MenuActionItem onClick={handleLogout}>Sign out</SC.MenuActionItem>
+      </SC.DropdownMenu>
     </SC.Wrap>
   );
 };

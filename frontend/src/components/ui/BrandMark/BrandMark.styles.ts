@@ -1,8 +1,8 @@
+import { Box } from "@mui/material";
 import styled from "styled-components";
-import { palette } from "../../theme";
+import { palette } from "../../../theme";
 
-/** Квадратная метка под логотип / иконку приложения. */
-export const GradientLogoMark = styled.div`
+export const StyledBrandMark = styled(Box)`
   display: inline-flex;
   align-items: center;
   justify-content: center;

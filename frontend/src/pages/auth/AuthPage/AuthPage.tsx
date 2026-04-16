@@ -12,7 +12,6 @@ import * as SC from "./AuthPage.styles";
 import { loginRequest, registerRequest } from "../../../api/authApi";
 import { paths } from "../../../app/paths";
 import { useAppDispatch } from "../../../store/hooks";
-import { EWelcomeKind, openWelcome } from "../../../store/welcomeSlice";
 import {
   PasswordHiddenIcon,
   PasswordVisibleIcon,
@@ -72,7 +71,6 @@ export const AuthPage = () => {
           email: data.email,
           password: data.password,
         });
-        dispatch(openWelcome({ name: user.name, kind: EWelcomeKind.Login }));
         navigate(paths.home, { replace: true });
       } else {
         const { user } = await registerRequest({
@@ -81,7 +79,6 @@ export const AuthPage = () => {
           password: data.password,
           confirmPassword: data.confirmPassword,
         });
-        dispatch(openWelcome({ name: user.name, kind: EWelcomeKind.Register }));
         navigate(paths.home, { replace: true });
       }
     } catch (e) {

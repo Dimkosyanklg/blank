@@ -1,7 +1,6 @@
-import { useState } from "react";
+import { type ChangeEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserCornerMenu } from "../../../components/UserCornerMenu";
-import { WelcomePopover } from "../../../components/WelcomePopover";
 import { logoutRequest } from "../../../api/authApi";
 import { githubModelsTestRequest } from "../../../api/githubModelsApi";
 import { paths } from "../../../app/paths";
@@ -10,6 +9,12 @@ import { clearUser } from "../../../store/userSlice";
 import * as SC from "./HomePage.styles";
 
 export const HomePage = () => {
+  const handlePromptChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setPrompt(e.target.value);
+  };
+
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -52,7 +57,6 @@ export const HomePage = () => {
   return (
     <SC.Page>
       <UserCornerMenu onLogout={logout} disabled={loading} />
-      <WelcomePopover />
       <SC.Layout>
         <SC.Header>
           <SC.Title>Home</SC.Title>
@@ -72,7 +76,7 @@ export const HomePage = () => {
               as="textarea"
               rows={3}
               value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
+              onChange={handlePromptChange}
               placeholder="e.g., explain what a REST API is in one sentence"
               disabled={loading}
             />
