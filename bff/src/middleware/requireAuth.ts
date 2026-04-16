@@ -12,21 +12,21 @@ export const requireAuth: RequestHandler = async (req, res, next) => {
   const raw = req.cookies?.[getAuthCookieName()] as string | undefined;
   const token = typeof raw === "string" ? raw.trim() : "";
   if (!token) {
-    sendUnauthorized(res, "Не авторизован");
+    sendUnauthorized(res, "Unauthorized");
     return;
   }
 
   const payload = await verifyAuthToken(token);
   if (!payload) {
     clearAuthCookie(res);
-    sendUnauthorized(res, "Сессия недействительна");
+    sendUnauthorized(res, "Invalid session");
     return;
   }
 
   const userRecord = await userRepository.findUserById(payload.userId);
   if (!userRecord) {
     clearAuthCookie(res);
-    sendUnauthorized(res, "Пользователь не найден");
+    sendUnauthorized(res, "User not found");
     return;
   }
 

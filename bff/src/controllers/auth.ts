@@ -18,7 +18,7 @@ export const register: RequestHandler = async (
 
   if (!result.ok) {
     res.status(409).json({
-      message: "Пользователь с таким email уже зарегистрирован",
+      message: "An account with this email already exists",
     });
     return;
   }
@@ -38,7 +38,7 @@ export const login: RequestHandler = async (
   }
 
   const result = await authService.loginUser(parsed.data);
-  const authFailedMessage = "Неверный email или пароль";
+  const authFailedMessage = "Invalid email or password";
 
   if (!result.ok) {
     res.status(401).json({ message: authFailedMessage });

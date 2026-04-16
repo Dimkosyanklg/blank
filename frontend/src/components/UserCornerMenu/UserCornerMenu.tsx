@@ -75,7 +75,7 @@ export const UserCornerMenu = ({ onLogout, disabled }: UserCornerMenuProps) => {
           </SC.MenuUserBlock>
           <SC.MenuDivider role="separator" />
           <SC.MenuButton type="button" role="menuitem" onClick={handleLogout}>
-            Выйти
+            Sign out
           </SC.MenuButton>
         </SC.Dropdown>
       )}

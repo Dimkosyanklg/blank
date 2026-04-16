@@ -85,7 +85,7 @@ export const AuthPage = () => {
         navigate(paths.home, { replace: true });
       }
     } catch (e) {
-      setMessage(e instanceof Error ? e.message : "Произошла ошибка");
+      setMessage(e instanceof Error ? e.message : "Something went wrong");
     }
   };
 
@@ -94,15 +94,15 @@ export const AuthPage = () => {
       <SC.Layout>
         <SC.Brand>
           <SC.Logo aria-hidden>✦</SC.Logo>
-          <SC.Title>Найди, чем заняться</SC.Title>
+          <SC.Title>Find something to do</SC.Title>
           <SC.Subtitle>
-            Фильмы, игры, спорт и другое — входите, чтобы получать персональные
-            подборки активностей.
+            Movies, games, sports, and more — sign in to get personalized activity
+            picks.
           </SC.Subtitle>
         </SC.Brand>
 
         <SC.Card>
-          <SC.Tabs role="tablist" aria-label="Режим">
+          <SC.Tabs role="tablist" aria-label="Mode">
             <SC.Tab
               type="button"
               role="tab"
@@ -110,7 +110,7 @@ export const AuthPage = () => {
               $active={mode === EAuthMode.Login}
               onClick={() => switchMode(EAuthMode.Login)}
             >
-              Вход
+              Sign in
             </SC.Tab>
             <SC.Tab
               type="button"
@@ -119,19 +119,19 @@ export const AuthPage = () => {
               $active={mode === EAuthMode.Register}
               onClick={() => switchMode(EAuthMode.Register)}
             >
-              Регистрация
+              Sign up
             </SC.Tab>
           </SC.Tabs>
 
           <form onSubmit={handleSubmit(onSubmit)} noValidate>
             {mode === EAuthMode.Register && (
               <SC.Field>
-                <SC.Label htmlFor="auth-name">Имя</SC.Label>
+                <SC.Label htmlFor="auth-name">Name</SC.Label>
                 <SC.Input
                   id="auth-name"
                   type="text"
                   autoComplete="name"
-                  placeholder="Как к вам обращаться"
+                  placeholder="How should we address you?"
                   aria-invalid={!!errors.name}
                   aria-describedby={errors.name ? "auth-name-error" : undefined}
                   {...register("name")}
@@ -163,7 +163,7 @@ export const AuthPage = () => {
             </SC.Field>
 
             <SC.Field>
-              <SC.Label htmlFor="auth-password">Пароль</SC.Label>
+              <SC.Label htmlFor="auth-password">Password</SC.Label>
               <SC.PasswordWrap>
                 <SC.PasswordInput
                   id="auth-password"
@@ -183,7 +183,7 @@ export const AuthPage = () => {
                 <SC.PasswordToggle
                   type="button"
                   aria-label={
-                    passwordVisible ? "Скрыть пароль" : "Показать пароль"
+                    passwordVisible ? "Hide password" : "Show password"
                   }
                   aria-pressed={passwordVisible}
                   aria-controls="auth-password"
@@ -205,7 +205,7 @@ export const AuthPage = () => {
 
             {mode === EAuthMode.Register && (
               <SC.Field>
-                <SC.Label htmlFor="auth-confirm">Повторите пароль</SC.Label>
+                <SC.Label htmlFor="auth-confirm">Confirm password</SC.Label>
                 <SC.PasswordWrap>
                   <SC.PasswordInput
                     id="auth-confirm"
@@ -224,8 +224,8 @@ export const AuthPage = () => {
                     type="button"
                     aria-label={
                       confirmVisible
-                        ? "Скрыть подтверждение пароля"
-                        : "Показать подтверждение пароля"
+                        ? "Hide password confirmation"
+                        : "Show password confirmation"
                     }
                     aria-pressed={confirmVisible}
                     aria-controls="auth-confirm"
@@ -248,24 +248,24 @@ export const AuthPage = () => {
 
             {mode === EAuthMode.Login && (
               <SC.ForgotPasswordRow>
-                <SC.Link href="#recover">Забыли пароль?</SC.Link>
+                <SC.Link href="#recover">Forgot password?</SC.Link>
               </SC.ForgotPasswordRow>
             )}
 
             <SC.Submit type="submit" disabled={isSubmitting || !isValid}>
               {isSubmitting
-                ? "Подождите…"
+                ? "Please wait…"
                 : mode === EAuthMode.Login
-                  ? "Войти"
-                  : "Создать аккаунт"}
+                  ? "Sign in"
+                  : "Create account"}
             </SC.Submit>
           </form>
 
           {message && <SC.Message>{message}</SC.Message>}
 
           <SC.Footer>
-            Регистрируясь, вы соглашаетесь с условиями использования сервиса
-            подбора активностей.
+            By signing up, you agree to the terms of service for activity
+            recommendations.
           </SC.Footer>
         </SC.Card>
       </SC.Layout>

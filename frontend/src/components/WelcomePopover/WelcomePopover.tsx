@@ -31,16 +31,16 @@ export const WelcomePopover = () => {
   }
 
   const title =
-    kind === EWelcomeKind.Login ? "С возвращением!" : "Добро пожаловать!";
+    kind === EWelcomeKind.Login ? "Welcome back!" : "Welcome!";
   const text =
     kind === EWelcomeKind.Login
-      ? `${displayName}, рады видеть вас снова.`
-      : `Аккаунт создан, ${displayName}. Можно пользоваться подборками активностей.`;
+      ? `${displayName}, great to see you again.`
+      : `Account created, ${displayName}. You can now use activity picks.`;
 
   const dismiss = () => dispatch(closeWelcome());
 
   return (
-    <SC.Anchor aria-label="Приветствие">
+    <SC.Anchor aria-label="Welcome message">
       <SC.Toast
         role="status"
         aria-live="polite"
@@ -51,7 +51,7 @@ export const WelcomePopover = () => {
           <SC.CloseButton
             type="button"
             onClick={dismiss}
-            aria-label="Закрыть уведомление"
+            aria-label="Dismiss notification"
           >
             ×
           </SC.CloseButton>

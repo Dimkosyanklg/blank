@@ -1,15 +1,15 @@
 import { z } from "zod";
 
 const emailField = z.pipe(
-  z.string().min(1, "Введите email"),
-  z.email({ error: "Некорректный email" })
+  z.string().min(1, "Email is required"),
+  z.email({ error: "Invalid email" })
 );
 
 export const registerBodySchema = z
   .object({
-    name: z.string().min(1, "Имя обязательно"),
+    name: z.string().min(1, "Name is required"),
     email: emailField,
-    password: z.string().min(8, "Пароль минимум 8 символов"),
+    password: z.string().min(8, "Password must be at least 8 characters"),
     confirmPassword: z.string().optional(),
   })
   .refine(
@@ -17,12 +17,12 @@ export const registerBodySchema = z
       data.confirmPassword === undefined ||
       data.confirmPassword === "" ||
       data.password === data.confirmPassword,
-    { message: "Пароли не совпадают", path: ["confirmPassword"] }
+    { message: "Passwords do not match", path: ["confirmPassword"] }
   );
 
 export const loginBodySchema = z.object({
   email: emailField,
-  password: z.string().min(1, "Введите пароль"),
+  password: z.string().min(1, "Password is required"),
 });
 
 export type RegisterBody = z.infer<typeof registerBodySchema>;

@@ -1,9 +1,9 @@
 import { isAxiosError } from "axios";
 
-export const API_ERROR_FALLBACK = "Произошла ошибка";
+export const API_ERROR_FALLBACK = "Something went wrong";
 
 export const API_ERROR_NETWORK =
-  "Не удалось связаться с сервером. Проверьте сеть и что BFF запущен.";
+  "Couldn't reach the server. Check your network and that the BFF is running.";
 
 export const messageFromResponseData = (data: unknown): string => {
   if (

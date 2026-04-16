@@ -38,7 +38,7 @@ export const DispatchedGlobalLoader = () => {
         size={48}
         thickness={4}
         sx={{ color: palette.brand }}
-        aria-label="Загрузка"
+        aria-label="Loading"
       />
     </Overlay>
   );
