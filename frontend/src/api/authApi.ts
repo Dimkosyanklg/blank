@@ -1,25 +1,27 @@
 import { bffClient } from "./bffClient";
 import { rejectAxios } from "./axiosErrors";
 
-export const AUTH_TOKEN_KEY = "bff_auth_token";
-
 export type AuthUser = {
   id: string;
   email: string;
   name: string;
 };
 
-type AuthSuccess = { user: AuthUser; token: string };
+type AuthSuccessBody = { user: AuthUser };
 
 export async function loginRequest(params: {
   email: string;
   password: string;
-}): Promise<AuthSuccess> {
+}): Promise<AuthSuccessBody> {
   try {
-    const { data } = await bffClient.post<AuthSuccess>("/auth/login", {
-      email: params.email.trim(),
-      password: params.password,
-    });
+    const { data } = await bffClient.post<AuthSuccessBody>(
+      "/auth/login",
+      {
+        email: params.email.trim(),
+        password: params.password,
+      },
+      { skipAuthRedirect: true }
+    );
     return data;
   } catch (e) {
     return rejectAxios(e);
@@ -31,20 +33,38 @@ export async function registerRequest(params: {
   email: string;
   password: string;
   confirmPassword: string;
-}): Promise<AuthSuccess> {
+}): Promise<AuthSuccessBody> {
   try {
-    const { data } = await bffClient.post<AuthSuccess>("/auth/register", {
-      name: params.name.trim(),
-      email: params.email.trim(),
-      password: params.password,
-      confirmPassword: params.confirmPassword,
-    });
+    const { data } = await bffClient.post<AuthSuccessBody>(
+      "/auth/register",
+      {
+        name: params.name.trim(),
+        email: params.email.trim(),
+        password: params.password,
+        confirmPassword: params.confirmPassword,
+      },
+      { skipAuthRedirect: true }
+    );
     return data;
   } catch (e) {
     return rejectAxios(e);
   }
 }
 
-export function persistAuthToken(token: string): void {
-  localStorage.setItem(AUTH_TOKEN_KEY, token);
+/** Текущий пользователь по HttpOnly-куке (без глобального лоадера — свой на обёртке). */
+export async function fetchCurrentUser(): Promise<AuthUser> {
+  try {
+    const { data } = await bffClient.get<{ user: AuthUser }>("/user");
+    return data.user;
+  } catch (e) {
+    return rejectAxios(e);
+  }
+}
+
+export async function logoutRequest(): Promise<void> {
+  try {
+    await bffClient.post("/auth/logout");
+  } catch (e) {
+    return rejectAxios(e);
+  }
 }

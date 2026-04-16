@@ -20,8 +20,8 @@ import {
   SpaceBetweenRow,
   SupportingText,
   TextInput,
-} from "../../components/ui";
-import { palette } from "../../theme";
+} from "../../../components/ui";
+import { palette } from "../../../theme";
 
 /** Фон экрана входа (градиенты и цвет текста — только для этой страницы). */
 export const Page = styled(CenteredScreen)`

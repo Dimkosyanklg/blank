@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import {
   authDefaultValues,
   loginSchema,
@@ -8,23 +9,24 @@ import {
   type AuthFormValues,
 } from "./auth.schema";
 import * as SC from "./AuthPage.styles";
-import {
-  loginRequest,
-  persistAuthToken,
-  registerRequest,
-} from "../../api/authApi";
+import { loginRequest, registerRequest } from "../../../api/authApi";
+import { paths } from "../../../app/paths";
+import { useAppDispatch } from "../../../store/hooks";
+import { EWelcomeKind, openWelcome } from "../../../store/welcomeSlice";
 import {
   PasswordHiddenIcon,
   PasswordVisibleIcon,
 } from "./PasswordRevealIcons";
 
-enum AuthMode {
+enum EAuthMode {
   Login = "login",
   Register = "register",
 }
 
 export const AuthPage = () => {
-  const [mode, setMode] = useState<AuthMode>(AuthMode.Login);
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const [mode, setMode] = useState<EAuthMode>(EAuthMode.Login);
   const [message, setMessage] = useState<string | null>(null);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
@@ -40,18 +42,18 @@ export const AuthPage = () => {
     defaultValues: authDefaultValues,
     mode: "onChange",
     resolver: (values, context, options) =>
-      zodResolver(mode === AuthMode.Login ? loginSchema : registerSchema)(
+      zodResolver(mode === EAuthMode.Login ? loginSchema : registerSchema)(
         values,
         context,
         options
       ),
   });
 
-  const switchMode = (next: AuthMode) => {
+  const switchMode = (next: EAuthMode) => {
     const current = getValues();
     reset({
       email: current.email,
-      name: next === AuthMode.Register ? current.name : "",
+      name: next === EAuthMode.Register ? current.name : "",
       password: "",
       confirmPassword: "",
     });
@@ -65,22 +67,22 @@ export const AuthPage = () => {
   const onSubmit = async (data: AuthFormValues) => {
     setMessage(null);
     try {
-      if (mode === AuthMode.Login) {
-        const { user, token } = await loginRequest({
+      if (mode === EAuthMode.Login) {
+        const { user } = await loginRequest({
           email: data.email,
           password: data.password,
         });
-        persistAuthToken(token);
-        setMessage(`С возвращением, ${user.name}!`);
+        dispatch(openWelcome({ name: user.name, kind: EWelcomeKind.Login }));
+        navigate(paths.home, { replace: true });
       } else {
-        const { user, token } = await registerRequest({
+        const { user } = await registerRequest({
           name: data.name,
           email: data.email,
           password: data.password,
           confirmPassword: data.confirmPassword,
         });
-        persistAuthToken(token);
-        setMessage(`Аккаунт создан. Добро пожаловать, ${user.name}!`);
+        dispatch(openWelcome({ name: user.name, kind: EWelcomeKind.Register }));
+        navigate(paths.home, { replace: true });
       }
     } catch (e) {
       setMessage(e instanceof Error ? e.message : "Произошла ошибка");
@@ -104,25 +106,25 @@ export const AuthPage = () => {
             <SC.Tab
               type="button"
               role="tab"
-              aria-selected={mode === AuthMode.Login}
-              $active={mode === AuthMode.Login}
-              onClick={() => switchMode(AuthMode.Login)}
+              aria-selected={mode === EAuthMode.Login}
+              $active={mode === EAuthMode.Login}
+              onClick={() => switchMode(EAuthMode.Login)}
             >
               Вход
             </SC.Tab>
             <SC.Tab
               type="button"
               role="tab"
-              aria-selected={mode === AuthMode.Register}
-              $active={mode === AuthMode.Register}
-              onClick={() => switchMode(AuthMode.Register)}
+              aria-selected={mode === EAuthMode.Register}
+              $active={mode === EAuthMode.Register}
+              onClick={() => switchMode(EAuthMode.Register)}
             >
               Регистрация
             </SC.Tab>
           </SC.Tabs>
 
           <form onSubmit={handleSubmit(onSubmit)} noValidate>
-            {mode === AuthMode.Register && (
+            {mode === EAuthMode.Register && (
               <SC.Field>
                 <SC.Label htmlFor="auth-name">Имя</SC.Label>
                 <SC.Input
@@ -167,7 +169,7 @@ export const AuthPage = () => {
                   id="auth-password"
                   type={passwordVisible ? "text" : "password"}
                   autoComplete={
-                    mode === AuthMode.Login
+                    mode === EAuthMode.Login
                       ? "current-password"
                       : "new-password"
                   }
@@ -201,7 +203,7 @@ export const AuthPage = () => {
               )}
             </SC.Field>
 
-            {mode === AuthMode.Register && (
+            {mode === EAuthMode.Register && (
               <SC.Field>
                 <SC.Label htmlFor="auth-confirm">Повторите пароль</SC.Label>
                 <SC.PasswordWrap>
@@ -244,7 +246,7 @@ export const AuthPage = () => {
               </SC.Field>
             )}
 
-            {mode === AuthMode.Login && (
+            {mode === EAuthMode.Login && (
               <SC.ForgotPasswordRow>
                 <SC.Link href="#recover">Забыли пароль?</SC.Link>
               </SC.ForgotPasswordRow>
@@ -253,7 +255,7 @@ export const AuthPage = () => {
             <SC.Submit type="submit" disabled={isSubmitting || !isValid}>
               {isSubmitting
                 ? "Подождите…"
-                : mode === AuthMode.Login
+                : mode === EAuthMode.Login
                   ? "Войти"
                   : "Создать аккаунт"}
             </SC.Submit>

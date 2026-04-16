@@ -77,6 +77,13 @@ export const findUserByEmail = async (
   return doc ? mapDoc(doc) : undefined;
 };
 
+export const findUserById = async (
+  id: string
+): Promise<UserRecord | undefined> => {
+  const doc = await UserModel.findById(id).lean();
+  return doc ? mapDoc(doc) : undefined;
+};
+
 export const verifyUserPassword = async (
   user: UserRecord,
   password: string

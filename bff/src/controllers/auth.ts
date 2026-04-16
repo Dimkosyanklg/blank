@@ -1,4 +1,5 @@
 import type { Request, RequestHandler, Response } from "express";
+import { clearAuthCookie, setAuthCookie } from "../helpers/authCookie";
 import { sendValidationError } from "../helpers/http";
 import { loginBodySchema, registerBodySchema } from "../schemas/auth";
 import * as authService from "../services/auth";
@@ -22,7 +23,8 @@ export const register: RequestHandler = async (
     return;
   }
 
-  res.status(201).json({ user: result.user, token: result.token });
+  setAuthCookie(res, result.token);
+  res.status(201).json({ user: result.user });
 };
 
 export const login: RequestHandler = async (
@@ -43,5 +45,11 @@ export const login: RequestHandler = async (
     return;
   }
 
-  res.status(200).json({ user: result.user, token: result.token });
+  setAuthCookie(res, result.token);
+  res.status(200).json({ user: result.user });
+};
+
+export const logout: RequestHandler = (_req: Request, res: Response) => {
+  clearAuthCookie(res);
+  res.status(204).end();
 };

@@ -1,4 +1,4 @@
-import { SignJWT } from "jose";
+import { SignJWT, jwtVerify } from "jose";
 
 const encoder = new TextEncoder();
 
@@ -19,6 +19,23 @@ export const createAuthToken = async (
     .setProtectedHeader({ alg: "HS256" })
     .setSubject(userId)
     .setIssuedAt()
-    .setExpirationTime("7d")
+    .setExpirationTime("1d")
     .sign(secret);
+};
+
+export const verifyAuthToken = async (
+  token: string
+): Promise<{ userId: string; email: string } | null> => {
+  try {
+    const secret = getSecret();
+    const { payload } = await jwtVerify(token, secret);
+    const sub = payload.sub;
+    const email = payload.email;
+    if (!sub || typeof email !== "string") {
+      return null;
+    }
+    return { userId: sub, email };
+  } catch {
+    return null;
+  }
 };
