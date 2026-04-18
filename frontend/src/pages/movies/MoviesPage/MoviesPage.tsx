@@ -1,14 +1,17 @@
 import { useNavigate } from "react-router-dom";
 import { UserCornerMenu } from "../../../components/UserCornerMenu";
+import { TmdbMovieSearch } from "../TmdbMovieSearch";
 import { logoutRequest } from "../../../api/authApi";
 import { paths } from "../../../app/paths";
 import { useAppDispatch } from "../../../store/hooks";
 import { clearUser } from "../../../store/userSlice";
-import * as SC from "./HomePage.styles";
+import { useState } from "react";
+import * as SC from "./MoviesPage.styles";
 
-export const HomePage = () => {
+export const MoviesPage = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const [searchBusy, setSearchBusy] = useState(false);
 
   const logout = async () => {
     try {
@@ -22,18 +25,18 @@ export const HomePage = () => {
 
   return (
     <SC.Page>
-      <UserCornerMenu onLogout={logout} />
+      <UserCornerMenu onLogout={logout} disabled={searchBusy} />
       <SC.Layout>
         <SC.Header>
-          <SC.Title>Home</SC.Title>
+          <SC.Title>Movies</SC.Title>
           <SC.Subtitle>
-            You are signed in. Open the movies page to try TMDB search through the
-            BFF.
+            Search via the BFF; the TMDB token never reaches the browser.
           </SC.Subtitle>
-          <SC.NavBlock>
-            <SC.TextNavLink to={paths.movies}>Go to movies</SC.TextNavLink>
-          </SC.NavBlock>
+          <SC.BackNav>
+            <SC.TextNavLink to={paths.home}>Back to home</SC.TextNavLink>
+          </SC.BackNav>
         </SC.Header>
+        <TmdbMovieSearch onBusyChange={setSearchBusy} />
       </SC.Layout>
     </SC.Page>
   );

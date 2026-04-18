@@ -1,0 +1,40 @@
+import { bffClient } from "./bffClient";
+import { rejectAxios } from "./axiosErrors";
+
+/** Первый результат поиска TMDB (как отдаёт BFF), либо `null`, если список пуст. */
+export type TmdbMovieSearchResultItem = {
+  adult?: boolean;
+  backdrop_path?: string | null;
+  genre_ids?: number[];
+  id: number;
+  original_language?: string;
+  original_title?: string;
+  overview?: string;
+  popularity?: number;
+  poster_path?: string | null;
+  release_date?: string;
+  title?: string;
+  video?: boolean;
+  vote_average?: number;
+  vote_count?: number;
+};
+
+export async function tmdbTestRequest(params: {
+  searchValue: string;
+}): Promise<TmdbMovieSearchResultItem | null> {
+  const searchValue = params.searchValue.trim();
+  if (!searchValue) {
+    throw new Error("Search text is required");
+  }
+  try {
+    const { data } = await bffClient.get<TmdbMovieSearchResultItem | null>(
+      "/tmdb/test",
+      {
+        params: { searchValue },
+      }
+    );
+    return data;
+  } catch (e) {
+    return rejectAxios(e);
+  }
+}

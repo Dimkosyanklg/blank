@@ -1,4 +1,5 @@
 import type { Request, RequestHandler, Response } from "express";
+import got, { HTTPError } from "got";
 
 type GithubModelsTestRequest = {
   prompt?: string;
@@ -37,28 +38,20 @@ export const testGithubModels: RequestHandler = async (
   const upstreamUrl = `${baseUrl.replace(/\/+$/, "")}/chat/completions`;
 
   try {
-    const upstreamResponse = await fetch(upstreamUrl, {
+    const { body: upstreamJson } = await got<GithubModelsChatResponse>(upstreamUrl, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({
+      json: {
         model,
         messages: [{ role: "developer", content: prompt }],
         temperature: 0.2,
         max_tokens: 200,
-      }),
+      },
+      responseType: "json",
     });
 
-    if (!upstreamResponse.ok) {
-      const rawBody = (await upstreamResponse.text()).trim();
-      return res.status(502).json({
-        message: `upstream returned non-2xx: ${rawBody}`,
-      });
-    }
-
-    const upstreamJson = (await upstreamResponse.json()) as GithubModelsChatResponse;
     const firstChoice = upstreamJson.choices?.[0];
 
     if (!firstChoice) {
@@ -69,7 +62,16 @@ export const testGithubModels: RequestHandler = async (
       model,
       reply: firstChoice.message?.content,
     });
-  } catch {
+  } catch (err) {
+    if (err instanceof HTTPError) {
+      const raw =
+        typeof err.response.body === "string"
+          ? err.response.body
+          : JSON.stringify(err.response.body);
+      return res.status(502).json({
+        message: `upstream returned non-2xx: ${raw.trim()}`,
+      });
+    }
     return res.status(502).json({ message: "upstream request failed" });
   }
 };

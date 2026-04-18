@@ -38,9 +38,9 @@ export const Title = styled(ScreenHeading)``;
 
 export const Subtitle = styled(SupportingText)``;
 
-export const NavBlock = styled.div`
+export const BackNav = styled.div`
   text-align: center;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
 `;
 
 export const TextNavLink = styled(Link)`
